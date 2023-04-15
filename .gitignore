@@ -1,0 +1,8 @@
+/StrokePredictor/*
+/ClipCounter/*
+.idea/*
+
+!/logs/
+!/lfw/
+!/img/
+!/datasets/
