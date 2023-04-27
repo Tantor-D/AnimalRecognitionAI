@@ -1,6 +1,5 @@
 # 需要输入一个图片的path，随后预测出这只动物的label
 # 输出的是一个label，按照置信度进行排序，置信度的唯一判断标准是特征距离低于阈值的图片的数量占训练集中数量的百分比（后面要改，因为实际使用中的话训练集中的图片数量不一样）
-# todo 后续考虑优化，输出一个list，当置信度不是非常高的时候返回多个
 # 没有图片匹配的话返回一个-1
 import argparse
 import os.path
@@ -79,11 +78,9 @@ def writeToTxt(msg, mode):
 
 
 if __name__ == "__main__":
-    # Adding necessary input arguments
-    # todo args 这个mode要进行限制，只有两类
     parser = argparse.ArgumentParser(description='ai detect')
     parser.add_argument('--img_path', default="", type=str, help='input img path')
-    parser.add_argument('--mode', default="local", type=str, help='input run type,local or server')
+    parser.add_argument('--mode', default="local", type=str, choices=["local", "server"],help='input run type,local or server')
     args = parser.parse_args()
 
     # 开始正式预测

@@ -83,7 +83,7 @@ if __name__ == "__main__":
     model = Facenet(backbone=backbone, num_classes=num_classes, pretrained=pretrained)
     if not pretrained:
         weights_init(model)
-    if model_path != '':  # todo 修改保存文件以后看看情况
+    if model_path != '':
         #   权值文件请看README，百度网盘下载
         print('Load weights {}.'.format(model_path))
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
