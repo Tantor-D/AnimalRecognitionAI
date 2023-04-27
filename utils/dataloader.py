@@ -102,7 +102,7 @@ class FacenetDataset(Dataset):
 
         # 先获得两张同一个人的人脸
         # 用来作为anchor和positive
-        c = random.randint(0, self.num_classes - 1)     # 随机取得一个种类
+        c = random.randint(0, self.num_classes - 1)  # 随机取得一个种类
         selected_path = self.paths[self.labels[:] == c]
         while len(selected_path) < 2:
             c = random.randint(0, self.num_classes - 1)
@@ -162,7 +162,6 @@ class FacenetDataset(Dataset):
             images[2, :, :, :] = image
         labels[2] = current_c
 
-
         return images, labels
 
 
@@ -217,6 +216,7 @@ class LFWDataset(datasets.ImageFolder):
         # return np.array(pairs)
         return pairs
 
+    # 最终返回一个列表path_list，里面存了成对的图片以及是否相同，(path0, path1, issame)
     def get_lfw_paths(self, lfw_dir, file_ext="jpg"):
 
         pairs = self.read_lfw_pairs(self.pairs_path)
@@ -226,17 +226,14 @@ class LFWDataset(datasets.ImageFolder):
         issame_list = []
 
         for i in range(len(pairs)):
-            # for pair in pairs:
             pair = pairs[i]
             if len(pair) == 3:
-                path0 = os.path.join(lfw_dir, pair[0], '%03d' % (int(pair[1])+17) + '.' + file_ext)
-                path1 = os.path.join(lfw_dir, pair[0], '%03d' % (int(pair[2])+17) + '.' + file_ext)
-                #print(f"len(pair)==3, path0:{path0}, path1:{path1}")
+                path0 = os.path.join(lfw_dir, pair[0], '%03d' % (int(pair[1]) + 17) + '.' + file_ext)
+                path1 = os.path.join(lfw_dir, pair[0], '%03d' % (int(pair[2]) + 17) + '.' + file_ext)
                 issame = True
             elif len(pair) == 4:
-                path0 = os.path.join(lfw_dir, pair[0], '%03d' % (int(pair[1])+17) + '.' + file_ext)
-                path1 = os.path.join(lfw_dir, pair[2], '%03d' % (int(pair[3])+17) + '.' + file_ext)
-                #print(f"len(pair)==4, path0:{path0}, path1:{path1}")
+                path0 = os.path.join(lfw_dir, pair[0], '%03d' % (int(pair[1]) + 17) + '.' + file_ext)
+                path1 = os.path.join(lfw_dir, pair[2], '%03d' % (int(pair[3]) + 17) + '.' + file_ext)
                 issame = False
             if os.path.exists(path0) and os.path.exists(path1):  # Only add the pair if both paths exist
                 path_list.append((path0, path1, issame))
@@ -246,7 +243,6 @@ class LFWDataset(datasets.ImageFolder):
                 nrof_skipped_pairs += 1
         if nrof_skipped_pairs >= 0:
             print('Skipped %d image pairs' % nrof_skipped_pairs)
-
         return path_list
 
     def __getitem__(self, index):

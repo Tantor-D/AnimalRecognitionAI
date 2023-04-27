@@ -18,15 +18,16 @@ class Facenet(object):
         #   训练好后logs文件夹下存在多个权值文件，选择验证集损失较低的即可。
         #   验证集损失较低不代表准确度较高，仅代表该权值在验证集上泛化性能较好。
         # --------------------------------------------------------------------------#
-        "model_path": "model_data/facenet_mobilenet.pth",
+        # todo 这个在上传服务器之后一定要改
+        "model_path": r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\1_resnet50_epoch=70_LFW=True\Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth",
         # --------------------------------------------------------------------------#
         #   输入图片的大小。
         # --------------------------------------------------------------------------#
-        "input_shape": [160, 160, 3],
+        "input_shape": [224, 224, 3],
         # --------------------------------------------------------------------------#
         #   所使用到的主干特征提取网络
         # --------------------------------------------------------------------------#
-        "backbone": "mobilenet",
+        "backbone": "resnet50",
         # --------------------------------------#
         #   是否使用Cuda
         #   没有GPU可以设置成False
@@ -84,13 +85,9 @@ class Facenet(object):
             new_image = new_image.convert("L")
         return new_image
 
-    # ---------------------------------------------------#
-    #   检测图片
-    # ---------------------------------------------------#
+    # 仅仅用于predict的时候，会计算出两张图片的feature并进行欧式距离的计算
     def detect_image(self, image_1, image_2):
-        # ---------------------------------------------------#
-        #   图片预处理，归一化
-        # ---------------------------------------------------#
+        # 图片预处理，归一化
         with torch.no_grad():
             image_1 = self.letterbox_image(image_1, [self.input_shape[1], self.input_shape[0]])
             image_2 = self.letterbox_image(image_2, [self.input_shape[1], self.input_shape[0]])
@@ -119,3 +116,18 @@ class Facenet(object):
         plt.text(-12, -12, 'Distance:%.3f' % l1, ha='center', va='bottom', fontsize=11)
         plt.show()
         return l1
+
+    def cal_feature(self, image_1):
+        # 图片预处理，归一化
+        with torch.no_grad():
+            image_1 = self.letterbox_image(image_1, [self.input_shape[1], self.input_shape[0]])
+
+            # np.expand_dims 添加batch_size维度
+            # transpose将通道调整到第一维度，这样才能放进pytorch
+            photo_1 = torch.from_numpy(np.expand_dims(np.transpose(np.array(image_1, np.float32) / 255, (2, 0, 1)), 0))
+            if self.cuda:
+                photo_1 = photo_1.cuda()
+
+            # 图片传入网络进行预测，得到特征向量
+            output1 = self.net(photo_1).cpu().numpy()
+        return output1

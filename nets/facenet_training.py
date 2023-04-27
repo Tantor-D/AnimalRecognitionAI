@@ -6,14 +6,15 @@ import torch
 from matplotlib import pyplot as plt
 
 
-def triplet_loss(alpha = 0.2):
-    def _triplet_loss(y_pred,Batch_size):
+def triplet_loss(alpha=0.2):
+    def _triplet_loss(y_pred, Batch_size):
         # 结果的三个部分
-        anchor, positive, negative = y_pred[:int(Batch_size)], y_pred[int(Batch_size):int(2*Batch_size)], y_pred[int(2*Batch_size):]
+        anchor, positive, negative = y_pred[:int(Batch_size)], y_pred[int(Batch_size):int(2 * Batch_size)], y_pred[
+                                                                                                            int(2 * Batch_size):]
 
         # 同一个人和不同人的欧氏距离了
-        pos_dist = torch.sqrt(torch.sum(torch.pow(anchor - positive,2), axis=-1))
-        neg_dist = torch.sqrt(torch.sum(torch.pow(anchor - negative,2), axis=-1))
+        pos_dist = torch.sqrt(torch.sum(torch.pow(anchor - positive, 2), axis=-1))
+        neg_dist = torch.sqrt(torch.sum(torch.pow(anchor - negative, 2), axis=-1))
 
         # 进行一个判定，必须要不同类有足够大的间距
         keep_all = (neg_dist - pos_dist < alpha).cpu().numpy().flatten()
@@ -24,9 +25,11 @@ def triplet_loss(alpha = 0.2):
 
         # 最后的loss，要缩小pos_dist，增大neg_dist
         basic_loss = pos_dist - neg_dist + alpha
-        loss = torch.sum(basic_loss)/torch.max(torch.tensor(1),torch.tensor(len(hard_triplets[0])))
+        loss = torch.sum(basic_loss) / torch.max(torch.tensor(1), torch.tensor(len(hard_triplets[0])))
         return loss
+
     return _triplet_loss
+
 
 def weights_init(net, init_type='normal', init_gain=0.02):
     def init_func(m):
@@ -45,21 +48,23 @@ def weights_init(net, init_type='normal', init_gain=0.02):
         elif classname.find('BatchNorm2d') != -1:
             torch.nn.init.normal_(m.weight.data, 1.0, 0.02)
             torch.nn.init.constant_(m.bias.data, 0.0)
+
     print('initialize network with %s type' % init_type)
     net.apply(init_func)
-    
+
+
 class LossHistory():
     def __init__(self, log_dir):
         import datetime
         curr_time = datetime.datetime.now()
-        time_str = datetime.datetime.strftime(curr_time,'%Y_%m_%d_%H_%M_%S')
-        self.log_dir    = log_dir
-        self.time_str   = time_str
-        self.save_path  = os.path.join(self.log_dir, "loss_" + str(self.time_str))
-        self.acc        = []
-        self.losses     = []
-        self.val_loss   = []
-        
+        time_str = datetime.datetime.strftime(curr_time, '%Y_%m_%d_%H_%M_%S')
+        self.log_dir = log_dir
+        self.time_str = time_str
+        self.save_path = os.path.join(self.log_dir, "loss_" + str(self.time_str))
+        self.acc = []
+        self.losses = []
+        self.val_loss = []
+
         os.makedirs(self.save_path)
 
     def append_loss(self, acc, loss, val_loss):
@@ -81,16 +86,18 @@ class LossHistory():
         iters = range(len(self.losses))
 
         plt.figure()
-        plt.plot(iters, self.losses, 'red', linewidth = 2, label='train loss')
-        plt.plot(iters, self.val_loss, 'coral', linewidth = 2, label='val loss')
+        plt.plot(iters, self.losses, 'red', linewidth=2, label='train loss')
+        plt.plot(iters, self.val_loss, 'coral', linewidth=2, label='val loss')
         try:
             if len(self.losses) < 25:
                 num = 5
             else:
                 num = 15
-            
-            plt.plot(iters, scipy.signal.savgol_filter(self.losses, num, 3), 'green', linestyle = '--', linewidth = 2, label='smooth train loss')
-            plt.plot(iters, scipy.signal.savgol_filter(self.val_loss, num, 3), '#8B4513', linestyle = '--', linewidth = 2, label='smooth val loss')
+
+            plt.plot(iters, scipy.signal.savgol_filter(self.losses, num, 3), 'green', linestyle='--', linewidth=2,
+                     label='smooth train loss')
+            plt.plot(iters, scipy.signal.savgol_filter(self.val_loss, num, 3), '#8B4513', linestyle='--', linewidth=2,
+                     label='smooth val loss')
         except:
             pass
 
@@ -104,21 +111,24 @@ class LossHistory():
         plt.cla()
         plt.close("all")
 
+
+
         plt.figure()
-        plt.plot(iters, self.acc, 'red', linewidth = 2, label='lfw acc')
+        plt.plot(iters, self.acc, 'red', linewidth=2, label='test acc')
         try:
             if len(self.losses) < 25:
                 num = 5
             else:
                 num = 15
-            
-            plt.plot(iters, scipy.signal.savgol_filter(self.acc, num, 3), 'green', linestyle = '--', linewidth = 2, label='smooth lfw acc')
+
+            plt.plot(iters, scipy.signal.savgol_filter(self.acc, num, 3), 'green', linestyle='--', linewidth=2,
+                     label='smooth test acc')
         except:
             pass
 
         plt.grid(True)
         plt.xlabel('Epoch')
-        plt.ylabel('Lfw Acc')
+        plt.ylabel('test acc')
         plt.legend(loc="upper right")
 
         plt.savefig(os.path.join(self.save_path, "epoch_acc_" + str(self.time_str) + ".png"))

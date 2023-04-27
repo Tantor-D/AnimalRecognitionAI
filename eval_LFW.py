@@ -29,6 +29,7 @@ def test(test_loader, model):
                 batch_idx * batch_size, len(test_loader.dataset),
                 100. * batch_idx / len(test_loader)))
 
+    # 转变为1维的[180,]，而不是原来的[23,8]
     labels = np.array([sublabel for label in labels for sublabel in label])
     distances = np.array([subdist for dist in distances for subdist in dist])
     tpr, fpr, accuracy, val, val_std, far, best_thresholds = evaluate(distances, labels)
@@ -63,10 +64,13 @@ if __name__ == "__main__":
 
     #   主干特征提取网络的选择
     #   mobilenet、inception_resnetv1
-    backbone = "mobilenet"
+    #    backbone = "mobilenet"
+    # backbone = "inception_resnetv1"
+    backbone = "resnet50"
 
     #   训练好的权值文件
-    model_path = "D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\mobilenet_epoch=100__LFW=False\Epoch100-Total_Loss0.0205.pth-Val_Loss0.4524.pth"
+    model_path = r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\1_resnet50_epoch=70_LFW=True\Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth"
+
 
     #   输入图像大小，常用设置如[112, 112, 3]
     input_shape = [224, 224, 3] if backbone == "resnet50" else [160, 160, 3]
@@ -79,8 +83,8 @@ if __name__ == "__main__":
     log_interval = 1
 
     test_loader = torch.utils.data.DataLoader(
-        LFWDataset(dir=lfw_dir_path, pairs_path=lfw_pairs_path, image_size=input_shape), batch_size=batch_size,
-        shuffle=False)
+        LFWDataset(dir=lfw_dir_path, pairs_path=lfw_pairs_path, image_size=input_shape),
+        batch_size=batch_size, shuffle=False)
 
     model = Facenet(backbone=backbone, mode="predict")
 
