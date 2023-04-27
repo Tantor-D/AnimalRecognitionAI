@@ -1,3 +1,5 @@
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -13,23 +15,20 @@ from nets.facenet import Facenet as facenet
 # --------------------------------------------#
 class Facenet(object):
     _defaults = {
-        # --------------------------------------------------------------------------#
         #   使用自己训练好的模型进行预测要修改model_path，指向logs文件夹下的权值文件
         #   训练好后logs文件夹下存在多个权值文件，选择验证集损失较低的即可。
         #   验证集损失较低不代表准确度较高，仅代表该权值在验证集上泛化性能较好。
-        # --------------------------------------------------------------------------#
-        # todo 这个在上传服务器之后一定要改
         # "model_path": r"/root/AnimalRecognitionAI/logs/1_resnet50_epoch=70_LFW=True/Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth",
-        "model_path": r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\1_resnet50_epoch=70_LFW=True\Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth",
+        "model_path": r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\1_resnet50_epoch=70_LFW=True\Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth" \
+            if sys.platform == "win32" else r"/root/AnimalRecognitionAI/logs/1_resnet50_epoch=70_LFW=True/Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth",
 
-        #   是否使用Cuda
-        # "cuda": False,  # 服务器上使用
-        "cuda": True,  # 本地使用
+        # 是否使用Cuda，使用的服务器没有GPU，而且装的pytorch也是cpu版本
+        "cuda": True if sys.platform == "win32" else False,
 
-        #   输入图片的大小。
+        # 输入图片的大小。
         "input_shape": [224, 224, 3],
 
-        #   所使用到的主干特征提取网络
+        # 所使用到的主干特征提取网络
         "backbone": "resnet50",
     }
 

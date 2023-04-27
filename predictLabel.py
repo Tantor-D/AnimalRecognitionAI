@@ -3,6 +3,7 @@
 # 没有图片匹配的话返回一个-1
 import argparse
 import os.path
+import sys
 
 from PIL import Image
 from facenet import Facenet
