@@ -8,3 +8,4 @@
 !/datasets/
 !/features/
 !/logs/final_use_model.pth
+!/model_data/roc_test.png
