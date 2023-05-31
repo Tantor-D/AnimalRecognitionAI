@@ -14,11 +14,9 @@ import numpy as np
 def predictLabel(img_path, mode, threshold_dis=1.09000):
     # 说明没有指定图片的地址
     if len(img_path) == 0:
-        writeToTxt("-1", mode)  # 约定-1表示空地址
-        return -1
+        return -1  # 约定-1表示空地址
     if not os.path.exists(img_path):
-        writeToTxt("-2", mode)  # 约定-2表示图片不存在
-        return -2
+        return -2 # 约定-2表示图片不存在
 
     # 准备好feature，labels和模型
     model = Facenet()
@@ -66,7 +64,7 @@ def predictLabel(img_path, mode, threshold_dis=1.09000):
     return correct_label
 
 
-def writeToTxt(msg, mode):
+def writeToTxt(msg, mode, additional_information=''):
     predict_txt_path = "/root/AnimalManagement/temp/predictLabel.txt" if mode == "server" else "C:/Users/Tantor/Desktop/predictLabel.txt"
     if int(msg) > 0:
         f = open("features/datasetMapping.txt", encoding='utf-8')
@@ -81,7 +79,7 @@ def writeToTxt(msg, mode):
         predict_txt.write(msg + ' ' + ani_name)
     else:
         predict_txt = open(predict_txt_path, mode="w", encoding='utf-8')
-        predict_txt.write(msg)
+        predict_txt.write(msg + ' ' + additional_information)
     predict_txt.close()
 
 
@@ -98,6 +96,10 @@ if __name__ == "__main__":
     # 将最终的结果写入预先定好的txt文件中，只有当返回值大于等于0时才说明运行正常，等于-3说明没有匹配的动物
     if label >= 0:
         writeToTxt(str(label + 1), args.mode)
+    elif label == -1:
+        writeToTxt("-1", args.mode, "空图片地址")
+    elif label == -2:
+        writeToTxt("-2", args.mode, "图片不存在")
     elif label == -3:
         writeToTxt("-3", args.mode)
     else:
