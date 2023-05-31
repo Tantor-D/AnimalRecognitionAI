@@ -68,7 +68,6 @@ def predictLabel(img_path, mode, threshold_dis=1.09000):
 
 def writeToTxt(msg, mode):
     predict_txt_path = "/root/AnimalManagement/temp/predictLabel.txt" if mode == "server" else "C:/Users/Tantor/Desktop/predictLabel.txt"
-    predict_txt = open(predict_txt_path, mode="w", encoding='utf-8')
     if int(msg) > 0:
         f = open("features/datasetMapping.txt", encoding='utf-8')
         lines = f.readlines()
@@ -78,15 +77,17 @@ def writeToTxt(msg, mode):
                 ani_name = line[1]
                 break
         f.close()
+        predict_txt = open(predict_txt_path, mode="w", encoding='utf-8')
         predict_txt.write(msg + ' ' + ani_name)
     else:
+        predict_txt = open(predict_txt_path, mode="w", encoding='utf-8')
         predict_txt.write(msg)
     predict_txt.close()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ai detect')
-    parser.add_argument('--img_path', default="C:/Users/Tantor/Desktop/1_013.jpg", type=str, help='input img path')
+    parser.add_argument('--img_path', default="", type=str, help='input img path')
     parser.add_argument('--mode', default="local", type=str, choices=["local", "server"],help='input run type,local or server')
     args = parser.parse_args()
 
