@@ -11,7 +11,7 @@ import numpy as np
 
 
 # 默认的阈值距离为超参数，要根据训练的结果进行调整
-def predictLabel(img_path, mode, threshold_dis=1.10000):
+def predictLabel(img_path, mode, threshold_dis=1.09000):
     # 说明没有指定图片的地址
     if len(img_path) == 0:
         writeToTxt("-1", mode)  # 约定-1表示空地址
@@ -23,11 +23,9 @@ def predictLabel(img_path, mode, threshold_dis=1.10000):
     # 准备好feature，labels和模型
     model = Facenet()
 
-    # todo 也许需要进行异常处理
-
     project_path = r"D:/Software_data/Pycharm_prj/AnimalRecognitionAI/" if mode == 'local' else r"/root/AnimalRecognitionAI/"
     features = np.load(project_path + "features/features.npy")
-    with open(project_path + "labels.txt") as f:
+    with open(project_path + "features/labels.txt") as f:
         dataset_labels = f.readlines()
     labels = []
     for label in dataset_labels:
@@ -51,7 +49,6 @@ def predictLabel(img_path, mode, threshold_dis=1.10000):
         dis = np.linalg.norm(feature - img_feature, axis=1)
         # print(f"index={i}, label={label}, dis={dis}")
         if dis < threshold_dis:
-            # print("i am in")
             correct_num_label_index[label] = correct_num_label_index[label] + 1
             # print(f"correct_num={correct_num_label_index[label]}")
 
@@ -61,26 +58,35 @@ def predictLabel(img_path, mode, threshold_dis=1.10000):
     for i in range(num_classes):
         if (correct_num_label_index[i] > 0):
             rate = correct_num_label_index[i] / img_num_label_index[i]
-
             if rate > max_correct_rate:
                 max_correct_rate = rate
                 correct_label = i
 
-    print(f"model predict label:{correct_label}")
-    print(f"it means real label:{correct_label + 1}")
+    print(f"model predict label:{correct_label}, means real label:{correct_label + 1}")
     return correct_label
 
 
 def writeToTxt(msg, mode):
     predict_txt_path = "/root/AnimalManagement/temp/predictLabel.txt" if mode == "server" else "C:/Users/Tantor/Desktop/predictLabel.txt"
-    predict_txt = open(predict_txt_path, mode="w")
-    predict_txt.write(msg)
+    predict_txt = open(predict_txt_path, mode="w", encoding='utf-8')
+    if int(msg) > 0:
+        f = open("features/datasetMapping.txt", encoding='utf-8')
+        lines = f.readlines()
+        for line in lines:
+            line = line.split(" ")
+            if int(line[0]) == int(msg):
+                ani_name = line[1]
+                break
+        f.close()
+        predict_txt.write(msg + ' ' + ani_name)
+    else:
+        predict_txt.write(msg)
     predict_txt.close()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ai detect')
-    parser.add_argument('--img_path', default="", type=str, help='input img path')
+    parser.add_argument('--img_path', default="C:/Users/Tantor/Desktop/1_013.jpg", type=str, help='input img path')
     parser.add_argument('--mode', default="local", type=str, choices=["local", "server"],help='input run type,local or server')
     args = parser.parse_args()
 

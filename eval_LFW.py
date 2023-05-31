@@ -58,20 +58,19 @@ def plot_roc(fpr, tpr, figure_name="roc.png"):
 
 
 if __name__ == "__main__":
-    #   是否使用Cuda
-    #   没有GPU可以设置成False
+    # 是否使用Cuda
+    # 没有GPU可以设置成False
     cuda = True
 
-    #   主干特征提取网络的选择
-    #   mobilenet、inception_resnetv1
-    #    backbone = "mobilenet"
-    # backbone = "inception_resnetv1"
+    # 主干特征提取网络的选择
+    # mobilenet、inception_resnetv1、resnet50
     backbone = "resnet50"
 
+    project_path = r"D:/Software_data/Pycharm_prj/AnimalRecognitionAI/"
+
     #   训练好的权值文件
-    model_path = r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\1_resnet50_epoch=70_LFW=True\Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth"
-
-
+    # model_path = project_path + r"logs/1_resnet50_epoch=70_LFW=True/Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth"
+    model_path = r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\model_data\final_use_model.pth"
     #   输入图像大小，常用设置如[112, 112, 3]
     input_shape = [224, 224, 3] if backbone == "resnet50" else [160, 160, 3]
     #   LFW评估数据集的文件路径和对应的txt文件

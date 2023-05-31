@@ -33,9 +33,8 @@ if __name__ == "__main__":
 
     # 主干特征提取网络的选择
     # mobilenet；inception_resnetv1
-    # backbone = "resnet50"
+    backbone = "resnet50"
     # backbone = "mobilenet"
-    backbone = "inception_resnetv1"
 
     # 常用设置如[112, 112, 3]
     input_shape = [224, 224, 3] if backbone == "resnet50" else [160, 160, 3]
@@ -137,7 +136,7 @@ if __name__ == "__main__":
         lr = 1e-3  # 冻结的时候可以调高，训的比较快
         Batch_size = 16  # todo 考虑调小，因为目前的数据集很小
         Init_Epoch = 0
-        Interval_Epoch = 30
+        Interval_Epoch = 10
 
         epoch_step = num_train // Batch_size
         epoch_step_val = num_val // Batch_size
@@ -173,8 +172,8 @@ if __name__ == "__main__":
         # ----------------------------------------------------#
         lr = 1e-4  # 比冻结的时候小
         Batch_size = 8  # 解冻的时候，占用显存更大了，batch适当减小
-        Interval_Epoch = 30  # 最好跟前面的一样
-        Epoch = 70  # 总训练的次数
+        Interval_Epoch = 10  # 最好跟前面的一样
+        Epoch = 30  # 总训练的次数
 
         epoch_step = num_train // Batch_size
         epoch_step_val = num_val // Batch_size

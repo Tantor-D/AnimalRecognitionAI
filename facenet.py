@@ -18,9 +18,9 @@ class Facenet(object):
         #   使用自己训练好的模型进行预测要修改model_path，指向logs文件夹下的权值文件
         #   训练好后logs文件夹下存在多个权值文件，选择验证集损失较低的即可。
         #   验证集损失较低不代表准确度较高，仅代表该权值在验证集上泛化性能较好。
-        # "model_path": r"/root/AnimalRecognitionAI/logs/1_resnet50_epoch=70_LFW=True/Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth",
-        "model_path": r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\1_resnet50_epoch=70_LFW=True\Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth" \
-            if sys.platform == "win32" else r"/root/AnimalRecognitionAI/logs/1_resnet50_epoch=70_LFW=True/Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth",
+        # "model_path": r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\logs\1_resnet50_epoch=70_LFW=True\Epoch70-Total_Loss0.0064.pth-Val_Loss0.1541.pth" \
+        "model_path": r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\model_data\final_use_model.pth" \
+            if sys.platform == "win32" else r"/root/AnimalRecognitionAI/model_data/final_use_model.pth",
 
         # 是否使用Cuda，使用的服务器没有GPU，而且装的pytorch也是cpu版本
         "cuda": True if sys.platform == "win32" else False,
