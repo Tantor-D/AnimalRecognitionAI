@@ -16,11 +16,9 @@ def predictLabel(img_path, mode, threshold_dis=1.09000):
     if len(img_path) == 0:
         return -1  # 约定-1表示空地址
     if not os.path.exists(img_path):
-        return -2 # 约定-2表示图片不存在
-
+        return -2  # 约定-2表示图片不存在
     # 准备好feature，labels和模型
     model = Facenet()
-
     project_path = r"D:/Software_data/Pycharm_prj/AnimalRecognitionAI/" if mode == 'local' else r"/root/AnimalRecognitionAI/"
     features = np.load(project_path + "features/features.npy")
     with open(project_path + "features/labels.txt") as f:
@@ -66,8 +64,9 @@ def predictLabel(img_path, mode, threshold_dis=1.09000):
 
 def writeToTxt(msg, mode, additional_information=''):
     predict_txt_path = "/root/AnimalManagement/temp/predictLabel.txt" if mode == "server" else "C:/Users/Tantor/Desktop/predictLabel.txt"
+    project_path = r"D:/Software_data/Pycharm_prj/AnimalRecognitionAI/" if mode == 'local' else r"/root/AnimalRecognitionAI/"
     if int(msg) > 0:
-        f = open("features/datasetMapping.txt", encoding='utf-8')
+        f = open(project_path + "features/datasetMapping.txt", encoding='utf-8')
         lines = f.readlines()
         for line in lines:
             line = line.split(" ")
@@ -85,8 +84,10 @@ def writeToTxt(msg, mode, additional_information=''):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ai detect')
-    parser.add_argument('--img_path', default="", type=str, help='input img path')
-    parser.add_argument('--mode', default="local", type=str, choices=["local", "server"],help='input run type,local or server')
+    parser.add_argument('--img_path', default=r"D:\Software_data\Pycharm_prj\AnimalRecognitionAI\img\1_013.jpg",
+                        type=str, help='input img path')
+    parser.add_argument('--mode', default="local", type=str, choices=["local", "server"],
+                        help='input run type,local or server')
     args = parser.parse_args()
 
     # 开始正式预测
@@ -101,6 +102,6 @@ if __name__ == "__main__":
     elif label == -2:
         writeToTxt("-2", args.mode, "图片不存在")
     elif label == -3:
-        writeToTxt("-3", args.mode)
+        writeToTxt("-3", args.mode, "aaa")
     else:
-        writeToTxt("-4", args.mode)  # 出现-4说明有问题
+        writeToTxt("-4", args.mode, "asda")  # 出现-4说明有问题
